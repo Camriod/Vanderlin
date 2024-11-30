@@ -21,7 +21,7 @@
 	var/lumber_amount = 1
 
 /obj/item/grown/log/tree/attacked_by(obj/item/I, mob/living/user) //This serves to reward woodcutting
-	if(user.used_intent.blade_class == BCLASS_CHOP && lumber_amount)
+	if(user.used_intent.blade_class == BCLASS_CHOP && lumber_amount && lumber)
 		var/skill_level = user.mind.get_skill_level(/datum/skill/labor/lumberjacking)
 		var/lumber_time = (40 - (skill_level * 5))
 		var/minimum = 1
@@ -86,7 +86,7 @@
 	gripped_intents = null
 	w_class = WEIGHT_CLASS_BULKY
 	smeltresult = /obj/item/rogueore/coal
-	lumber = /obj/item/grown/log/tree/lumber
+	lumber = /obj/item/natural/wood/plank
 	lumber_amount = 2
 
 /obj/item/grown/log/tree/stick
@@ -103,6 +103,7 @@
 	gripped_intents = null
 	slot_flags = ITEM_SLOT_MOUTH|ITEM_SLOT_HIP
 	lumber_amount = 0
+	lumber = null
 
 /obj/item/grown/log/tree/stick/Crossed(mob/living/L)
 	. = ..()
@@ -143,12 +144,6 @@
 		else
 			user.visible_message("<span class='warning'>[user] sharpens [src].</span>")
 		return
-	if(istype(I, /obj/item/grown/log/tree/stick))
-		var/obj/item/natural/bundle/stick/F = new(src.loc)
-		H.put_in_hands(F)
-		H.visible_message("[user] ties the sticks into a bundle.")
-		qdel(I)
-		qdel(src)
 	if(istype(I, /obj/item/natural/bundle/stick))
 		var/obj/item/natural/bundle/stick/B = I
 		if(B.amount < B.maxamount)
@@ -157,6 +152,16 @@
 			B.update_bundle()
 			qdel(src)
 	..()
+
+/obj/item/grown/log/tree/stick/attack_right(mob/living/user)
+	. = ..()
+	var/obj/item/I = user.get_active_held_item()
+	if(istype(I, /obj/item/grown/log/tree/stick))
+		var/obj/item/natural/bundle/stick/F = new(src.loc)
+		user.put_in_hands(F)
+		user.visible_message("[user] ties the sticks into a bundle.")
+		qdel(I)
+		qdel(src)
 
 /obj/item/grown/log/tree/stake
 	name = "stake"
@@ -173,16 +178,8 @@
 	twohands_required = FALSE
 	gripped_intents = null
 	slot_flags = ITEM_SLOT_MOUTH|ITEM_SLOT_HIP
-
-/obj/item/grown/log/tree/lumber
-	seed = null
-	name = "lumber"
-	desc = "This is some lumber."
-	icon_state = "lumber"
-	attacked_sound = 'sound/misc/woodhit.ogg'
-	blade_dulling = 0
-	max_integrity = 50
-	firefuel = 5 MINUTES
+	lumber = null
+	lumber_amount = 0
 
 /obj/item/natural/wood/plank
 	name = "wood plank"
