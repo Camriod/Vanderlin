@@ -218,30 +218,25 @@
 	to_chat(owner, span_warning("The feeling of lightness fades."))
 	REMOVE_TRAIT(owner, TRAIT_NOFALLDAMAGE1, MAGIC_TRAIT)
 
+/atom/movable/screen/alert/status_effect/buff/darkvision
+	name = "Darkvision"
+	desc = "I can see in the dark somewhat."
+	icon_state = "buff"
+
 /datum/status_effect/buff/darkvision
 	id = "darkvision"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/darkvision
 	duration = 10 MINUTES
 
-/atom/movable/screen/alert/status_effect/buff/darkvision
-	name = "Darkvision"
-	desc = span_nicegreen("I can see in the dark.")
-	icon_state = "buff"
-
 /datum/status_effect/buff/darkvision/on_apply()
 	. = ..()
-	var/mob/living/carbon/human/H = owner
-	var/obj/item/organ/eyes/eyes = H.getorgan(/obj/item/organ/eyes)
-	if (!eyes || eyes.lighting_alpha)
-		return
+	to_chat(owner, span_warning("The darkness fades somewhat."))
 	ADD_TRAIT(owner, TRAIT_DARKVISION, MAGIC_TRAIT)
-	owner.update_sight()
 
 /datum/status_effect/buff/darkvision/on_remove()
 	. = ..()
-	to_chat(owner, span_warning("Darkness shrouds your senses once more."))
+	to_chat(owner, span_warning("The darkness returns to normal."))
 	REMOVE_TRAIT(owner, TRAIT_DARKVISION, MAGIC_TRAIT)
-	owner.update_sight()
 
 /atom/movable/screen/alert/status_effect/buff/haste
 	name = "Haste"
@@ -351,16 +346,24 @@
 	. = ..()
 	var/mob/living/carbon/human/H = owner
 	var/obj/item/organ/eyes/eyes = H.getorgan(/obj/item/organ/eyes)
-	if (!eyes || eyes.lighting_alpha)
+	if(!eyes || eyes.lighting_alpha)
 		return
-	ADD_TRAIT(owner, TRAIT_BESTIALSENSE)
+	eyes.see_in_dark = 4
+	eyes.lighting_alpha = LIGHTING_PLANE_ALPHA_NV_TRAIT
 	owner.update_sight()
 
 /datum/status_effect/buff/beastsense/on_remove()
 	. = ..()
-	to_chat(owner, span_warning("Darkness shrouds your senses once more."))
-	REMOVE_TRAIT(owner, BESTIALSENSE)
+	var/mob/living/carbon/human/H = owner
+	var/obj/item/organ/eyes/eyes = H.getorgan(/obj/item/organ/eyes)
+	if(!eyes)
+		return
+	if((iself(owner)))
+		return
+	eyes.see_in_dark = 0
+	eyes.lighting_alpha = null
 	owner.update_sight()
+
 
 /datum/status_effect/buff/beastsense_elf
 	id = "beastsenself"
