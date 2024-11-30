@@ -16,7 +16,7 @@
 	from doing this unless you absolutely know what you are doing, and have defined a
 	conversion in savefile.dm
 */
-/proc/init_sprite_accessory_subtypes(prototype, list/L, list/male, list/female,roundstart = FALSE)//Roundstart argument builds a specific list for roundstart parts where some parts may be locked
+/proc/init_sprite_accessory_subtypes(prototype, list/L, list/male, list/female,roundstart = FALSE, female_same = FALSE)//Roundstart argument builds a specific list for roundstart parts where some parts may be locked
 	if(!istype(L))
 		L = list()
 	if(!istype(male))
@@ -39,6 +39,8 @@
 		switch(D.gender)
 			if(MALE)
 				male += D.name
+				if(female_same)
+					female += D.name
 			if(FEMALE)
 				female += D.name
 			else
@@ -622,6 +624,17 @@
 	gender = FEMALE
 	specuse = list("human", "dwarf", "elf", "aasimar", "tiefling", "halforc")
 
+/datum/sprite_accessory/hair/singlebraid
+	name = "Single braid"
+	icon_state = "singlebraid"
+	gender = FEMALE
+	specuse = list("human", "dwarf", "elf", "aasimar", "tiefling", "halforc")
+
+/datum/sprite_accessory/hair/shorthime
+	name = "Hime Cut (Short)"
+	icon_state = "shorthime"
+	gender = FEMALE
+	specuse = list("human", "dwarf", "elf", "aasimar", "tiefling", "halforc")
 
 //////////////////////////////
 // UNISEX Hair Definitions  //

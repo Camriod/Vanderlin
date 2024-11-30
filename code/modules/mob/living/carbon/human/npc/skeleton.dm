@@ -9,7 +9,11 @@
 	var/skel_outfit = /datum/outfit/job/roguetown/npc/skeleton
 	ambushable = FALSE
 	rot_type = null
-	possible_rmb_intents = list()
+	base_intents = list(INTENT_HELP, INTENT_DISARM, INTENT_GRAB, /datum/intent/unarmed/claw)
+	a_intent = INTENT_HELP
+	possible_mmb_intents = list(INTENT_STEAL, INTENT_JUMP, INTENT_KICK, INTENT_BITE)
+	possible_rmb_intents = list(/datum/rmb_intent/feint, /datum/rmb_intent/aimed, /datum/rmb_intent/strong, /datum/rmb_intent/weak)
+	stand_attempts = 4
 
 /mob/living/carbon/human/species/skeleton/npc/no_equipment
 	skel_outfit = null
@@ -21,6 +25,10 @@
 	aggressive = 1
 	mode = AI_IDLE
 	wander = TRUE
+	simpmob_attack = 40
+	simpmob_defend = 0
+	wander = TRUE
+	attack_speed = -10
 
 /mob/living/carbon/human/species/skeleton/Initialize()
 	. = ..()
@@ -70,6 +78,7 @@
 	ADD_TRAIT(src, TRAIT_NOPAIN, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_TOXIMMUNE, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_LIMBATTACHMENT, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_CRITICAL_WEAKNESS, TRAIT_GENERIC)
 	if(skel_outfit)
 		var/datum/outfit/OU = new skel_outfit
 		if(OU)
@@ -337,3 +346,8 @@
 	mind.adjust_skillrank(/datum/skill/combat/knives, 3, TRUE)
 	mind.adjust_skillrank(/datum/skill/combat/axesmaces, 3, TRUE)
 	mind.adjust_skillrank(/datum/skill/combat/shields, 3, TRUE)
+
+/mob/living/carbon/human/species/skeleton/death_arena/after_creation()
+	..()
+	equipOutfit(new /datum/outfit/job/roguetown/arena_skeleton)
+	ADD_TRAIT(src, TRAIT_CRITICAL_WEAKNESS, TRAIT_GENERIC)
